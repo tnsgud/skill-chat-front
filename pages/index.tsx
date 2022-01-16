@@ -7,23 +7,10 @@ import Layout from '../components/Layout';
 
 const Index: NextPage = () => {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true);
-
-  const checkLogin = async () => {
-    // const response = await axios.get(
-    //   `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/getName/testuser`
-    // );
-
-    await router.replace({
-      pathname: isLogin ? '/home' : '/login',
-      query: isLogin
-        ? { displayName: 'tnsgud', isLogin: isLogin } //{ response.data.displayUserName }
-        : { isLogin },
-    });
-  };
+  const [isLogin, setIsLogin] = useState(false );
 
   useEffect(() => {
-    checkLogin();
+    router.replace({pathname:isLogin ? '/home' : '/login',query:{isLogin:isLogin}}).then(r => console.log(r));
   }, []);
 
   return (

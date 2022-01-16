@@ -8,7 +8,11 @@ import Layout from '../components/Layout';
 const Login:NextPage = () => {
   const responseGoogle = (
     response: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) => {};
+  ) => {
+    if( response ) {
+
+    }
+  };
 
   return (
     <Layout>
@@ -17,6 +21,7 @@ const Login:NextPage = () => {
         buttonText={'Google Login'}
         onSuccess={responseGoogle}
         onFailure={responseGoogle}
+        cookiePolicy={'single_host_origin'}
       />
     </Layout>
   );

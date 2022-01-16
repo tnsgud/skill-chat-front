@@ -5,59 +5,47 @@ import axios from 'axios';
 import Layout from '../components/Layout';
 
 interface UserInfo {
-  displayName: string;
+  displayName: string | string[] | undefined;
   photo: string;
 }
 
-const userInfo: UserInfo = {
-  displayName: '박순형',
-  photo: 'http://img.khan.co.kr/news/2020/10/16/2020101601001687000138341.jpg',
-};
-
-const userInfos: UserInfo[] = [
-  {
-    displayName: '김찬웅',
-    photo:
-      'http://img.khan.co.kr/news/2020/10/16/2020101601001687000138341.jpg',
-  },
-  {
-    displayName: '원종인',
-    photo:
-      'http://img.khan.co.kr/news/2020/10/16/2020101601001687000138341.jpg',
-  },
-  {
-    displayName: '하태웅',
-    photo:
-      'http://img.khan.co.kr/news/2020/10/16/2020101601001687000138341.jpg',
-  },
-];
-
 const Home: NextPage = () => {
-  // const [userInfo, setUserInfo] = useState<UserInfo>({
-  //   displayName: '',
-  //   photo: '',
-  // });
-  // const name = useRouter().query.displayName;
-  //
-  // const getUserInfo = async () => {
-  //   const info: UserInfo = {
-  //     displayName: name as string,
-  //     photo:
-  //       'http://img.khan.co.kr/news/2020/10/16/2020101601001687000138341.jpg',
-  //   };
-  //   setUserInfo(info);
-  // };
-  //
-  // useEffect(() => {
-  //   getUserInfo();
-  // }, []);
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    displayName: 'init name',
+    photo: '',
+  });
+  const [friendList, setFriendList] = useState<number[]>([]);
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/getName/testUser`
+      );
+
+      setUserInfo({
+        displayName: response.data.displayUserName,
+        photo:
+          'https://file.mk.co.kr/meet/neds/2021/12/image_readtop_2021_1128388_16391105484879287.jpg',
+      });
+    };
+
+    const getFriendList = async () => {
+      const response = await axios.get(
+        `${process.env.NExt_PUBLIC_PREFIX_DEV}/user/getFriendList/testUser`
+      );
+      setFriendList(response.data.firendList);
+    };
+
+    getUserInfo();
+    getFriendList();
+  }, []);
 
   return (
     <Layout>
       <p>
         <img
           src={userInfo.photo}
-          alt={'user profile photo'}
+          alt={'user profile photo '}
           width={100}
           height={100}
         />
@@ -65,30 +53,23 @@ const Home: NextPage = () => {
         <button type={'button'}>메시지 보내기</button>
       </p>
 
-      {userInfos.map((item) => {
+      {friendList.map( async (item) => {
+        const nameResponse = await axios.get(`${process.env.NExt_PUBLIC_PREFIX_DEV}/user/getName/${item}`)
+        const photoResponse = await axios.get(`${process.env.NExt_PUBLIC_PREFIX_DEV}/user/getProfilePhoto/${item}`)
+
         return (
-          <p key={item.displayName}>
+          <p key={item}>
             <img
-              src={item.photo}
+              src={photoResponse.data.photo}
               alt={'user profile photo'}
               width={100}
               height={100}
             />
-            {item.displayName}
+            {nameResponse.data.displayUserName}
             <button type={'button'}>메시지 보내기</button>
           </p>
         );
       })}
-      {/*{userInfo.friendList.map(async (id) => {*/}
-      {/*  //axios get name을 이용해서 이름을 보내줌*/}
-      {/*  // const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_HOST}/user/getName/${id}`)*/}
-      {/*  // const name = response.data*/}
-
-      {/*  const name = '박순형';*/}
-      {/*  return <h1 key={id}>{id}</h1>*/}
-      {/*  // return <FriendInfo key={id} displayName={name} photo={'picture'}/>*/}
-      {/*  // return <FriendInfo key={id}/>*/}
-      {/*})}*/}
     </Layout>
   );
 

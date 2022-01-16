@@ -9,7 +9,7 @@ const Header = () => (
     <Link href='/home'>
       <a style={linkStyle}>Home</a>
     </Link>
-    <Link href={'/chattingRoomList'}>
+    <Link href={'/chattingRoomList'} >
       <a style={linkStyle}>chat</a>
     </Link>
   </div>

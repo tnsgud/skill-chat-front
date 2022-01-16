@@ -1,10 +1,10 @@
 import { NextPage } from 'next';
 import Layout from '../components/Layout';
-import { useEffect, MouseEvent } from 'react';
+import { useEffect, MouseEvent, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
-interface ChattingRoomId {
+interface ChattingRoomData {
   roomId: number;
   users: number[];
   displayRoomName: string;
@@ -15,29 +15,15 @@ const userName = ['', '박순형', '김찬웅', '원종인'];
 const ChattingRoomList: NextPage = () => {
   const currentUserId = 1;
   const router = useRouter();
-  // test data
-  const chattingRooms: ChattingRoomId[] = [
-    { roomId: 1, displayRoomName: 'test chatting room(1,2)', users: [1, 2] },
-    { roomId: 2, displayRoomName: 'test chatting room(1,3)', users: [1, 3] },
-    { roomId: 3, displayRoomName: 'test chatting room(2,3)', users: [2, 3] },
-    {
-      roomId: 4,
-      displayRoomName: 'test chatting room(1,2,3)',
-      users: [1, 2, 3],
-    },
-  ];
 
-  // test data
-  let chatList: number[] = [1, 2, 4];
+  const [chatList, setChatList] = useState<number[]>([]);
 
   useEffect(() => {
-    // axios를 이용하여 user chat list 가져오기
-    // async function getChatList() {
-    //   const response = await axios.get('')
-    //   chatList = response.data.chatlist
-    // }
-    // getChatList()
-    //test data
+    const getChatList = async () => {
+      const response = await axios.get(`${process.env.NExt_PUBLIC_PREFIX_DEV}/user/getChatList/${router.query.currentUserId}`)
+    }
+
+    getChatList()
   }, []);
 
   const onClick = (e: MouseEvent<HTMLParagraphElement>) => {
@@ -46,20 +32,15 @@ const ChattingRoomList: NextPage = () => {
 
   return (
     <Layout>
-      {chatList.map((id) => {
-        // const response = await axios.get(
-        //   `${process.env.NEXT_PUBLIC_BACK_HOST}/chatting/getChattingRoomData/${id}`
-        // );
-        // const { data } = response;
-        // const chatInfo: ChattingRoomId = {
-        //   roomId: id,
-        //   displayRoomName: data.displayRoomName,
-        //   users: data.users,
-        // };
-        const chatInfo: ChattingRoomId = {
+      {chatList.map(async (id) => {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACK_HOST}/chatting/getChattingRoomData/${id}`
+        );
+        const { data } = response;
+        const chatInfo: ChattingRoomData = {
           roomId: id,
-          displayRoomName: `test room ${id}`,
-          users: chattingRooms.filter((value) => value.roomId === id)[0].users,
+          displayRoomName: data.displayRoomName,
+          users: data.users,
         };
 
         return (

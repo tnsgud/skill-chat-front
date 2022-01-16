@@ -1,9 +1,7 @@
 import Header from './Header';
 import {
   ReactChild,
-  ReactChildren,
   ReactFragment,
-  ReactNode,
   ReactPortal,
 } from 'react';
 
