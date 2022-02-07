@@ -2,15 +2,22 @@ import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
-import axios from 'axios';
 import Layout from '../components/Layout';
+import { getCookie } from '../components/cookie';
+import axios from 'axios';
 
 const Index: NextPage = () => {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(false );
 
   useEffect(() => {
-    router.replace({pathname:isLogin ? '/home' : '/login',query:{isLogin:isLogin}}).then(r => console.log(r));
+    const cookie = getCookie('idToken')
+
+    if (cookie === undefined) {
+      router.replace('/login')
+    }else {
+      router.replace('/home')
+    }
   }, []);
 
   return (

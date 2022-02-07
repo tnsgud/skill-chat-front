@@ -1,30 +1,45 @@
 import { NextPage } from 'next';
-import GoogleLogin, {
+import  {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
+  useGoogleLogin
 } from 'react-google-login';
-import Layout from '../components/Layout';
 
-const Login:NextPage = () => {
-  const responseGoogle = (
+import Layout from '../components/Layout';
+import {  useRouter } from 'next/router';
+
+import {  setCookie } from '../components/cookie';
+
+const Login: NextPage = () => {
+  const router = useRouter();
+
+  const responseGoogle = async (
     response: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
-    if( response ) {
+    if ('getId' in response) {
+      const expires = new Date()
+      expires.setDate(expires.getDay()+1)
 
+      setCookie('idToken', response.getAuthResponse().id_token, {
+        path: '/',
+        expires:expires
+      });
     }
+    await router.replace('/home');
   };
+
+  const { signIn, loaded } = useGoogleLogin({
+    clientId: `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`,
+    onSuccess: responseGoogle,
+    onFailure: (error) => console.log(error),
+    isSignedIn: false
+  });
 
   return (
     <Layout>
-      <GoogleLogin
-        clientId={`${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`}
-        buttonText={'Google Login'}
-        onSuccess={responseGoogle}
-        onFailure={responseGoogle}
-        cookiePolicy={'single_host_origin'}
-      />
+      <button onClick={signIn}>로그인</button>
     </Layout>
   );
 };
 
-export default Login
+export default Login;

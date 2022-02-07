@@ -1,87 +1,42 @@
 import { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, MouseEvent, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/Layout';
+import Friend from '../components/friend';
 
-interface UserInfo {
-  displayName: string | string[] | undefined;
+export type UserInfo = {
+  uid: number;
+  displayName: string;
   photo: string;
-}
+};
 
 const Home: NextPage = () => {
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    displayName: 'init name',
-    photo: '',
-  });
-  const [friendList, setFriendList] = useState<number[]>([]);
+  let myProfile: UserInfo = {
+    uid: 1,
+    displayName: 'None',
+    photo: 'None',
+  };
+  const [friendList, setFriendList] = useState<number[]>([2, 3]);
 
   useEffect(() => {
-    const getUserInfo = async () => {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/getName/testUser`
-      );
 
-      setUserInfo({
-        displayName: response.data.displayUserName,
-        photo:
-          'https://file.mk.co.kr/meet/neds/2021/12/image_readtop_2021_1128388_16391105484879287.jpg',
-      });
-    };
-
-    const getFriendList = async () => {
-      const response = await axios.get(
-        `${process.env.NExt_PUBLIC_PREFIX_DEV}/user/getFriendList/testUser`
-      );
-      setFriendList(response.data.firendList);
-    };
-
-    getUserInfo();
-    getFriendList();
   }, []);
 
   return (
     <Layout>
       <p>
         <img
-          src={userInfo.photo}
-          alt={'user profile photo '}
+          src={myProfile.photo}
+          alt={'프로필 사진'}
           width={100}
           height={100}
+          className={'p-10'}
         />
-        {userInfo.displayName}
+        {myProfile.displayName}
         <button type={'button'}>메시지 보내기</button>
       </p>
-
-      {friendList.map( async (item) => {
-        const nameResponse = await axios.get(`${process.env.NExt_PUBLIC_PREFIX_DEV}/user/getName/${item}`)
-        const photoResponse = await axios.get(`${process.env.NExt_PUBLIC_PREFIX_DEV}/user/getProfilePhoto/${item}`)
-
-        return (
-          <p key={item}>
-            <img
-              src={photoResponse.data.photo}
-              alt={'user profile photo'}
-              width={100}
-              height={100}
-            />
-            {nameResponse.data.displayUserName}
-            <button type={'button'}>메시지 보내기</button>
-          </p>
-        );
-      })}
     </Layout>
   );
-
-  // return (
-  //   <>
-  //     <form onSubmit={onSubmit}>
-  //       <div>
-  //         <input type={'text'} /> <input type={'submit'} />
-  //       </div>
-  //     </form>
-  //   </>
-  // );
 };
 
 export default Home;
