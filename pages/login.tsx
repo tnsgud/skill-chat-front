@@ -1,14 +1,12 @@
 import { NextPage } from 'next';
-import  {
+import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
-  useGoogleLogin
+  useGoogleLogin,
 } from 'react-google-login';
+import { useRouter } from 'next/router';
 
-import Layout from '../components/Layout';
-import {  useRouter } from 'next/router';
-
-import {  setCookie } from '../components/cookie';
+import { getCookie, setCookie } from '../components/cookie';
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -17,12 +15,12 @@ const Login: NextPage = () => {
     response: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
     if ('getId' in response) {
-      const expires = new Date()
-      expires.setDate(expires.getDay()+1)
+      const expires = new Date();
+      expires.setDate(response.getAuthResponse().expires_at+10);
 
       setCookie('idToken', response.getAuthResponse().id_token, {
         path: '/',
-        expires:expires
+        expires: expires,
       });
     }
     await router.replace('/home');
@@ -32,14 +30,10 @@ const Login: NextPage = () => {
     clientId: `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`,
     onSuccess: responseGoogle,
     onFailure: (error) => console.log(error),
-    isSignedIn: false
+    isSignedIn: false,
   });
 
-  return (
-    <Layout>
-      <button onClick={signIn}>로그인</button>
-    </Layout>
-  );
+  return <button onClick={signIn}>로그인</button>;
 };
 
 export default Login;

@@ -22,7 +22,7 @@ const Layout = (
       | undefined;
   }
 ) => (
-  <div style={layoutStyle}>
+  <div className='font-custom'>
     <Header />
     {props.children}
   </div>
