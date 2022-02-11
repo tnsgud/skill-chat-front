@@ -1,7 +1,9 @@
-import { NextPage } from 'next';
+import { useRouter } from 'next/router';
 
-const ChattingRoom: NextPage = () => {
-  return <div>this is chatting room</div>;
+const ChattingRoom = () => {
+  const { uid } = useRouter().query;
+
+  return <div>{uid}</div>;
 };
 
 export default ChattingRoom;

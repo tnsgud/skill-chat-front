@@ -6,7 +6,7 @@ const linkStyle = {
 
 const Header = () => (
   <div className='ml-5 mt-5'>
-    <Link href='/home'>
+    <Link href={'/home'}>
       <a style={linkStyle}>Home</a>
     </Link>
     <Link href={'/chattingRoomList'} >

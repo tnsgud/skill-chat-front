@@ -57,8 +57,6 @@ const Home: NextPage = () => {
           return <Friend key={e} uid={e} />;
         })}
       </div>
-      
-      
     </div>
   );
 };
