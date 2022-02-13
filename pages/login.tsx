@@ -1,4 +1,3 @@
-import { NextPage } from 'next';
 import {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
@@ -7,23 +6,45 @@ import {
 import { useRouter } from 'next/router';
 
 import { getCookie, setCookie } from '../components/cookie';
+import axios from 'axios';
 
-const Login: NextPage = () => {
+const Login = () => {
   const router = useRouter();
 
   const responseGoogle = async (
     response: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
     if ('getId' in response) {
-      const expires = new Date();
-      expires.setDate(response.getAuthResponse().expires_at+10);
+      const { profileObj } = response;
+      const existsRes = await axios.get(
+        `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/getUserByEmail/${profileObj.email}`
+      );
 
-      setCookie('idToken', response.getAuthResponse().id_token, {
-        path: '/',
-        expires: expires,
-      });
+      if (existsRes.data === '') {
+        const dateRes = await axios.get(
+          `${process.env.NEXT_PUBLIC_PREFIX_DEV}/serverDateTime`
+        );
+
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/createUser`,
+          {
+            displayUserName: profileObj.name,
+            email: profileObj.email,
+            signDate: dateRes.data,
+          }
+        );
+      } else {
+        const expires = new Date();
+        expires.setDate(response.getAuthResponse().expires_at + 10);
+
+        setCookie('uid', existsRes.data, {
+          path: '/',
+          expires: expires,
+        });
+      }
+
+      await router.replace('/home');
     }
-    await router.replace('/home');
   };
 
   const { signIn, loaded } = useGoogleLogin({

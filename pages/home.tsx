@@ -2,34 +2,36 @@ import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Friend from '../components/friend';
+import { UserInfo } from '../types';
 
-export type UserInfo = {
-  uid: string;
-  displayName: string;
-  photo: string;
-};
-
-const Home: NextPage = () => {
+const Home = ({ uid }: { uid: string }) => {
   const [friendList, setFriendList] = useState<string[]>([]);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     uid: '',
-    displayName: '',
-    photo: '',
+    photo: null,
+    email: '',
+    displayUserName: '',
+    chatList: [],
+    friendList: [],
   });
 
   const homeInit = async () => {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/getAllUserInfo/갔겅땠뒹텬될냠뀔똑챵췌러`
+      `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/getAllUserInfo/${uid}`
     );
 
     const { data } = res;
 
+    const newData = Object.keys(data)
+      .filter((k) => !(k === 'id' || k === 'signDate'))
+      .reduce((obj, key) => {
+        // @ts-ignore
+        obj[key] = data[key];
+        return obj;
+      }, {});
+
+    setUserInfo(newData as UserInfo);
     setFriendList(data.friendList);
-    setUserInfo({
-      uid: data.uid,
-      displayName: data.displayUserName,
-      photo: data.photo,
-    });
   };
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const Home: NextPage = () => {
           }
           alt='profile'
         />
-        {userInfo.displayName}
+        {userInfo.displayUserName}
       </p>
 
       <div className='text-2xl mx-5'>

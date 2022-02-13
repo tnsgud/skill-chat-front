@@ -5,10 +5,9 @@ import { getCookie } from '../components/cookie';
 
 const Index: NextPage = () => {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(false );
 
   useEffect(() => {
-    const cookie = getCookie('idToken');
+    const cookie = getCookie('uid');
 
     if (cookie === undefined) {
       router.replace('/login')
