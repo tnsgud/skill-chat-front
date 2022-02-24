@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { MouseEvent, useEffect, useState } from 'react';
-import { UserInfo } from '../pages/home';
+import { UserInfo } from '../types/index';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -9,7 +9,7 @@ const Friend = ({ uid }: { uid: string }) => {
   const [info, setInfo] = useState<UserInfo>({
     uid: '',
     photo: '',
-    displayName: '',
+    displayUserName: '',
   });
 
   const getInfo = async () => {
@@ -18,7 +18,7 @@ const Friend = ({ uid }: { uid: string }) => {
     );
     const { data } = res;
 
-    setInfo({ uid: uid, displayName: data.displayUserName, photo: data.photo });
+    setInfo({ uid: uid, displayUserName: data.displayUserName, photo: data.photo });
   };
 
   useEffect(() => {
