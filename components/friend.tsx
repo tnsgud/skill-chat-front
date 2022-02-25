@@ -8,8 +8,11 @@ const Friend = ({ uid }: { uid: string }) => {
   const router = useRouter();
   const [info, setInfo] = useState<UserInfo>({
     uid: '',
-    photo: '',
     displayUserName: '',
+    photo: '',
+    email: '',
+    chatList: [],
+    friendList: [],
   });
 
   const getInfo = async () => {
@@ -18,16 +21,19 @@ const Friend = ({ uid }: { uid: string }) => {
     );
     const { data } = res;
 
-    setInfo({ uid: uid, displayUserName: data.displayUserName, photo: data.photo });
+    setInfo({
+      uid: uid,
+      displayUserName: data.displayUserName,
+      photo: data.photo,
+      email: data.email,
+      chatList: data.chatList,
+      friendList: data.friendList,
+    });
   };
 
   useEffect(() => {
     getInfo();
   }, []);
-
-  const onClick = (e: MouseEvent) => {
-    router.push({ pathname: '/chattingRoom', query: uid });
-  };
 
   return (
     <Link href={{ pathname: '/chattingRoom', query: { uid: uid } }}>
@@ -41,7 +47,7 @@ const Friend = ({ uid }: { uid: string }) => {
           }
           alt='profile'
         />
-        <div>{info.displayName}</div>
+        <div>{info.displayUserName}</div>
       </div>
     </Link>
   );

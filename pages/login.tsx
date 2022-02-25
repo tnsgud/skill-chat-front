@@ -10,6 +10,11 @@ import axios from 'axios';
 
 const Login = () => {
   const router = useRouter();
+  const delay = (t: number) => {
+    return new Promise(function (resolve) {
+      setTimeout(resolve.bind(null), t);
+    });
+  };
 
   const responseGoogle = async (
     response: GoogleLoginResponse | GoogleLoginResponseOffline
@@ -25,25 +30,47 @@ const Login = () => {
           `${process.env.NEXT_PUBLIC_PREFIX_DEV}/serverDateTime`
         );
 
-        await axios.post(
+        const uidRes = await axios.post(
           `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/createUser`,
           {
             displayUserName: profileObj.name,
             email: profileObj.email,
             signDate: dateRes.data,
+          },
+          {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
           }
         );
+
+        if (uidRes.status === 201) {
+          console.log(uidRes.data);
+
+          const expires = new Date();
+          expires.setDate(response.getAuthResponse().expires_at + 10);
+
+          setCookie('uid', uidRes.data.uid, {
+            path: '/',
+            expires: expires,
+          });
+          delay(1000);
+          await router.replace({
+            pathname: '/home',
+            query: {
+              uid: getCookie('uid'),
+            },
+          });
+        }
       } else {
         const expires = new Date();
         expires.setDate(response.getAuthResponse().expires_at + 10);
 
-        setCookie('uid', existsRes.data, {
+        setCookie('uid', existsRes.data.uid, {
           path: '/',
           expires: expires,
         });
       }
-
-      await router.replace('/home');
     }
   };
 

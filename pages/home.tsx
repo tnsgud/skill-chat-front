@@ -3,8 +3,10 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Friend from '../components/friend';
 import { UserInfo } from '../types';
+import { getCookie } from '../components/cookie';
 
-const Home = ({ uid }: { uid: string }) => {
+const Home = () => {
+  const uid = getCookie('uid');
   const [friendList, setFriendList] = useState<string[]>([]);
   const [userInfo, setUserInfo] = useState<UserInfo>({
     uid: '',
