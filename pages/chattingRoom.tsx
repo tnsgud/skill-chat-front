@@ -49,14 +49,7 @@ const ChattingRoom = () => {
   });
 
   const onClick = (e: MouseEvent<HTMLButtonElement>) => {
-    socket.emit('speak', {
-      roomId: '간럿섬외능낌킵븐앳빙띳쌜',
-      sender: getCookie('uid'),
-      type: 'msg',
-      content: content,
-      dateTime: '2022-02-25 23:32:00'
-    });
-    setContent('');
+    console.log(content === '');
 
   };
 
@@ -64,27 +57,41 @@ const ChattingRoom = () => {
     setContent(e.currentTarget.value);
   };
 
+  const onKeyPress = (e:FormEvent<HTMLInputElement>) =>{
+    if(content === '') {
+      return;
+    }
+    socket.emit('speak', {
+      roomId: '간럿섬외능낌킵븐앳빙띳쌜',
+      sender: getCookie('uid'),
+      type: 'msg',
+      content: content,
+      dateTime: '2022-02-25 23:32:00'
+    });
+    setContent('')
+  }
+
   return (
-    <>
-      <div>
+    <div className={'relative bg-gray-700'}>
+      <div className={'py-16'}>
         {
           chattingData.map((data, index) => {
-            const isMe = data.sender === '갠늄않론뫄뫈캥얌매쑹박왕';
+            const isMe = data.sender === getCookie('uid');
             return <div key={index} className={`${isMe ? 'flex justify-end' : 'flex justify-start'} p-2`}>
               <div className={`${isMe ? 'bg-blue-200 ':'bg-blue-400'} text-center w-fit p-5 rounded-xl`}>{data.content}</div>
             </div>;
           })
         }
       </div>
-      <div>
+      <div className={'fixed bottom-0 right-0 left-0 bg-gray-700'}>
         <input
           value={content}
-          className='outline outline-offset-2 outline-1'
+          className={'w-full'}
           onChange={onChange}
+          onKeyPress={onKeyPress}
         />
-        <button onClick={onClick}>전송</button>
       </div>
-    </>
+    </div>
   );
 };
 

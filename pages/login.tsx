@@ -54,7 +54,7 @@ const Login = () => {
             path: '/',
             expires: expires,
           });
-          delay(1000);
+          await delay(1000);
           await router.replace({
             pathname: '/home',
             query: {
