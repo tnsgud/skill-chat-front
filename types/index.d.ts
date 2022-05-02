@@ -6,3 +6,12 @@ export type UserInfo = {
   photo:string|null,
   uid:string
 }
+
+export type ChattingData = {
+  sender: string;
+  content: string;
+  dateTime: string;
+  type: string
+};
+
+export type SocketChattingData = ChattingData & { roomId: string; };

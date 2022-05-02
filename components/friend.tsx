@@ -17,7 +17,7 @@ const Friend = ({ uid }: { uid: string }) => {
 
   const getInfo = async () => {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_PREFIX_DEV}/user/getAllUserInfo/${uid}`
+      `${process.env.NEXT_PUBLIC_BASE_URL_DEV}/user/getAllUserInfo/${uid}`
     );
     const { data } = res;
 

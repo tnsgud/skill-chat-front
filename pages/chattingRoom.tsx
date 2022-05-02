@@ -3,27 +3,21 @@ import { useRouter } from 'next/router';
 import { FormEvent, MouseEvent, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { getCookie } from '../components/cookie';
+import { ChattingData, SocketChattingData } from '../types';
+import { getServerDateTime, getUserName } from '../lib/utils';
 
-type ChattingData = {
-  sender: string;
-  content: string;
-  dateTime: string;
-};
 
-type ChattingDataWithName = ChattingData & { name: string };
-type SocketChattingData = ChattingData & { roomId: string; type: string };
-
-const socket = io(`${process.env.NEXT_PUBLIC_PREFIX_DEV}/chattingRoom`, {
+const socket = io(`${process.env.NEXT_PUBLIC_BASE_URL_DEV}/chattingRoom`, {
   transports: ['polling']
 });
 
 const ChattingRoom = () => {
-  const [chattingData, setChattingData] = useState<ChattingDataWithName[]>([]);
+  const [chattingData, setChattingData] = useState<ChattingData[]>([]);
   const [content, setContent] = useState<string>('');
 
   const getChattingData = async () => {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_PREFIX_DEV}/chatting/getChattingData/간럿섬외능낌킵븐앳빙띳쌜`
+      `${process.env.NEXT_PUBLIC_BASE_URL_DEV}/chatting/getChattingData/간럿섬외능낌킵븐앳빙띳쌜`
     );
     const data = res.data;
     setChattingData(data);
@@ -40,36 +34,35 @@ const ChattingRoom = () => {
   useEffect(() => {
     socket.on('listen', (data: SocketChattingData) => {
       setChattingData([...chattingData, {
-        name:'',
         sender: data.sender,
         content: data.content,
-        dateTime: data.dateTime
+        dateTime: data.dateTime,
+        type: data.type
       }]);
     });
   });
-
-  const onClick = (e: MouseEvent<HTMLButtonElement>) => {
-    console.log(content === '');
-
-  };
 
   const onChange = (e: FormEvent<HTMLInputElement>) => {
     setContent(e.currentTarget.value);
   };
 
-  const onKeyPress = (e:FormEvent<HTMLInputElement>) =>{
-    if(content === '') {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (content === '') {
       return;
     }
+
     socket.emit('speak', {
       roomId: '간럿섬외능낌킵븐앳빙띳쌜',
       sender: getCookie('uid'),
       type: 'msg',
       content: content,
-      dateTime: '2022-02-25 23:32:00'
+      dateTime: await getServerDateTime()
     });
-    setContent('')
-  }
+
+    setContent('');
+  };
 
   return (
     <div className={'relative bg-gray-700'}>
@@ -78,19 +71,19 @@ const ChattingRoom = () => {
           chattingData.map((data, index) => {
             const isMe = data.sender === getCookie('uid');
             return <div key={index} className={`${isMe ? 'flex justify-end' : 'flex justify-start'} p-2`}>
-              <div className={`${isMe ? 'bg-blue-200 ':'bg-blue-400'} text-center w-fit p-5 rounded-xl`}>{data.content}</div>
+              <div
+                className={`${isMe ? 'bg-blue-200 ' : 'bg-blue-400'} text-center w-fit p-5 rounded-xl`}>{data.content}</div>
             </div>;
           })
         }
       </div>
-      <div className={'fixed bottom-0 right-0 left-0 bg-gray-700'}>
+      <form className={'fixed bottom-0 right-0 left-0 bg-gray-700'} onSubmit={onSubmit}>
         <input
           value={content}
-          className={'w-full'}
+          className={'w-full h-16'}
           onChange={onChange}
-          onKeyPress={onKeyPress}
         />
-      </div>
+      </form>
     </div>
   );
 };
