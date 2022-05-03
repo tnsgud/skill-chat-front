@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { MouseEvent, useEffect, useState } from 'react';
-import { UserInfo } from '../types/index';
-import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { UserInfo } from '../types';
 import Link from 'next/link';
+import Image from 'next/image';
+import { getUserInfoByUid } from '../lib/utils';
 
 const Friend = ({ uid }: { uid: string }) => {
-  const router = useRouter();
   const [info, setInfo] = useState<UserInfo>({
     uid: '',
     displayUserName: '',
@@ -15,28 +15,25 @@ const Friend = ({ uid }: { uid: string }) => {
     friendList: [],
   });
 
-  const getInfo = async () => {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL_DEV}/user/getAllUserInfo/${uid}`
-    );
-    const { data } = res;
-
-    setInfo({
-      uid: uid,
-      displayUserName: data.displayUserName,
-      photo: data.photo,
-      email: data.email,
-      chatList: data.chatList,
-      friendList: data.friendList,
-    });
-  };
-
   useEffect(() => {
+    const getInfo = async () => {
+      const data = await getUserInfoByUid(uid);
+
+      setInfo({
+        uid: uid,
+        displayUserName: data.displayUserName,
+        photo: data.photo,
+        email: data.email,
+        chatList: data.chatList,
+        friendList: data.friendList,
+      });
+    };
+    
     getInfo();
-  }, []);
+  }, [uid]);
 
   return (
-    <Link href={{ pathname: '/chattingRoom', query: { uid: uid } }}>
+    <Link href={{ pathname: '/chattingRoom', query: { uid: uid } }} passHref>
       <div className='flex flex-row items-center text-2xl hover:bg-blue-50'>
         <img
           className='w-32 h-32 rounded-2xl m-3'

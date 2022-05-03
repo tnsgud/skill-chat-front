@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getCookie } from '../components/cookie';
 
@@ -7,12 +7,15 @@ const Index: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const cookie = getCookie('uid');
+    const uid = getCookie('uid');
 
-    if (cookie === undefined) {
-      router.replace('/login')
-    }else {
-      router.replace('/home')
+    if (uid === undefined) {
+      router.replace({ pathname: '/login' });
+    } else {
+      router.replace({
+        pathname: '/home',
+        query: { uid: uid }
+      });
     }
   }, []);
 

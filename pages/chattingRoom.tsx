@@ -1,12 +1,10 @@
 import axios from 'axios';
-import { useCallback, useRef } from 'react';
-import { useRouter } from 'next/router';
-import { FormEvent, MouseEvent, useEffect, useState } from 'react';
+import { useRef } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { getCookie } from '../components/cookie';
 import { ChattingData, SocketChattingData } from '../types';
 import { getServerDateTime, getUserNameByUid } from '../lib/utils';
-
 
 const socket = io(`${process.env.NEXT_PUBLIC_BASE_URL_DEV}/chattingRoom`, {
   transports: ['polling']

@@ -1,44 +1,25 @@
-import { NextPage } from 'next';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import Friend from '../components/friend';
 import { UserInfo } from '../types';
-import { getCookie } from '../components/cookie';
+import { getUserInfoByUid } from '../lib/utils';
+import { useRouter } from 'next/router';
 
 const Home = () => {
-  const uid = getCookie('uid');
-  const [friendList, setFriendList] = useState<string[]>([]);
+  const uid = useRouter().query.uid as string;
   const [userInfo, setUserInfo] = useState<UserInfo>({
     uid: '',
     photo: null,
     email: '',
     displayUserName: '',
     chatList: [],
-    friendList: [],
+    friendList: []
   });
 
-  const homeInit = async () => {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL_DEV}/user/getAllUserInfo/${uid}`
-    );
-
-    const { data } = res;
-
-    const newData = Object.keys(data)
-      .filter((k) => !(k === 'id' || k === 'signDate'))
-      .reduce((obj, key) => {
-        // @ts-ignore
-        obj[key] = data[key];
-        return obj;
-      }, {});
-
-    setUserInfo(newData as UserInfo);
-    setFriendList(data.friendList);
-  };
-
   useEffect(() => {
-    homeInit();
-  }, []);
+    getUserInfoByUid(uid).then(value => {
+      setUserInfo(value);
+    });
+  }, [uid]);
 
   return (
     <div className='divide-y m-5'>
@@ -57,7 +38,7 @@ const Home = () => {
 
       <div className='text-2xl mx-5'>
         <div className='pl-3'>My friends</div>
-        {friendList.map((e) => {
+        {userInfo.friendList.map((e) => {
           return <Friend key={e} uid={e} />;
         })}
       </div>

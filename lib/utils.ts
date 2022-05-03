@@ -50,6 +50,27 @@ export async function getUserInfoByUid(uid: string): Promise<UserInfo> {
   };
 }
 
+
+export async function createUser(displayUserName: string, email: string, signDate: string): Promise<string> {
+  const res = await axios.post(
+    `${process.env.NEXT_PUBLIC_BASE_URL_DEV}/user/createUser`,
+    {
+      displayUserName: displayUserName,
+      email: email,
+      signDate: signDate
+    },
+    {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      }
+    }
+  );
+
+  const { uid } = res.data;
+
+  return uid === '' ? '' : uid;
+}
+
 export async function getCurrentUserInfoByUid(): Promise<UserInfo> {
   return getUserInfoByUid(getCookie('uid'));
 }

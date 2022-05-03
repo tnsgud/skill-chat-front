@@ -4,10 +4,8 @@ import {
   useGoogleLogin
 } from 'react-google-login';
 import { useRouter } from 'next/router';
-
 import { getCookie, setCookie } from '../components/cookie';
-import axios from 'axios';
-import { getServerDateTime, getUserIdByEmail } from '../lib/utils';
+import { createUser, getServerDateTime, getUserIdByEmail } from '../lib/utils';
 
 const Login = () => {
   const router = useRouter();
@@ -19,56 +17,26 @@ const Login = () => {
       const { profileObj } = response;
       let uid = await getUserIdByEmail(profileObj.email);
 
-      if (uid === '') {
-        const date = getServerDateTime();
+      if (uid === undefined) {
+        const date = await getServerDateTime();
 
-        const res = await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL_DEV}/user/createUser`,
-          {
-            displayUserName: profileObj.name,
-            email: profileObj.email,
-            signDate: date
-          },
-          {
-            headers: {
-              'Access-Control-Allow-Origin': '*'
-            }
-          }
-        );
-
-        if (res.status === 201) {
-          uid = res.data.uid;
-          const expires = new Date();
-          expires.setDate(response.getAuthResponse().expires_at + 10);
-
-          setCookie('uid', uid, {
-            path: '/',
-            expires: expires
-          });
-
-          await router.replace({
-            pathname: '/home',
-            query: {
-              uid: getCookie('uid')
-            }
-          });
-        }
-      } else {
-        const expires = new Date();
-        expires.setDate(response.getAuthResponse().expires_at + 10);
-
-        setCookie('uid', uid, {
-          path: '/',
-          expires: expires
-        });
-
-        await router.replace({
-          pathname: '/home',
-          query: {
-            uid: getCookie('uid')
-          }
-        });
+        uid = await createUser(profileObj.name, profileObj.email, date);
       }
+
+      const expires = new Date();
+      expires.setDate(response.getAuthResponse().expires_at + 10);
+
+      setCookie('uid', uid, {
+        path: '/',
+        expires: expires
+      });
+
+      await router.replace({
+        pathname: '/home',
+        query: {
+          uid: uid
+        }
+      });
     }
   };
 
