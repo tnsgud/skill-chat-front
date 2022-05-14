@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Friend from '../components/friend';
 import { UserInfo } from '../types';
-import { getUserInfoByUid } from '../lib/utils';
+import { getUserByUid } from '../lib/utils';
 import { useRouter } from 'next/router';
 
 const Home = () => {
@@ -16,7 +16,7 @@ const Home = () => {
   });
 
   useEffect(() => {
-    getUserInfoByUid(uid).then(value => {
+    getUserByUid(uid).then(value => {
       setUserInfo(value);
     });
   }, [uid]);
@@ -39,6 +39,7 @@ const Home = () => {
       <div className='text-2xl mx-5'>
         <div className='pl-3'>My friends</div>
         {userInfo.friendList.map((e) => {
+          console.log(e);
           return <Friend key={e} uid={e} />;
         })}
       </div>

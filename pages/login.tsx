@@ -4,7 +4,7 @@ import {
   useGoogleLogin
 } from 'react-google-login';
 import { useRouter } from 'next/router';
-import { getCookie, setCookie } from '../components/cookie';
+import { setCookie } from '../components/cookie';
 import { createUser, getServerDateTime, getUserIdByEmail } from '../lib/utils';
 
 const Login = () => {
