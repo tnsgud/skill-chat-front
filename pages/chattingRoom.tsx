@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { getCookie } from '../components/cookie';
 import { ChattingData, SocketChattingData } from '../types';
-import { getServerDateTime, getUserNameByUid } from '../lib/utils';
+import { getServerDateTime } from '../lib/utils';
 
 const socket = io(`${process.env.NEXT_PUBLIC_BASE_URL_DEV}/chattingRoom`, {
   transports: ['polling']
@@ -65,8 +65,6 @@ const ChattingRoom = () => {
       content: content,
       dateTime: await getServerDateTime()
     });
-
-
 
     setContent('');
   };

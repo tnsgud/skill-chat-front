@@ -1,12 +1,10 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { UserInfo } from '../types';
+import { User } from '../types';
 import Link from 'next/link';
-import Image from 'next/image';
-import { getUserInfoByUid } from '../lib/utils';
+import { getUserByUid } from '../lib/utils';
 
 const Friend = ({ uid }: { uid: string }) => {
-  const [info, setInfo] = useState<UserInfo>({
+  const [info, setInfo] = useState<User>({
     uid: '',
     displayUserName: '',
     photo: '',
@@ -17,7 +15,7 @@ const Friend = ({ uid }: { uid: string }) => {
 
   useEffect(() => {
     const getInfo = async () => {
-      const data = await getUserInfoByUid(uid);
+      const data = await getUserByUid(uid);
 
       setInfo({
         uid: uid,

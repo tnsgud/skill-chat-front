@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getCookie } from '../components/cookie';
-import { UserInfo } from '../types';
+import { User } from '../types';
 
 export async function getUserNameByUid(uid: string): Promise<string> {
   const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL_DEV}/user/getName/${uid}`);
@@ -22,7 +22,7 @@ export async function getCurrentUserNameByUid(): Promise<string> {
   return getUserNameByUid(getCookie('uid'));
 }
 
-export async function getUserByUid(uid: string): Promise<UserInfo> {
+export async function getUserByUid(uid: string): Promise<User> {
   const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL_DEV}/user/getAllUserInfo/${uid}`);
   const { data } = res;
   return {
@@ -56,7 +56,7 @@ export async function createUser(displayUserName: string, email: string, signDat
   return uid === '' ? '' : uid;
 }
 
-export async function getCurrentUserByUid(): Promise<UserInfo> {
+export async function getCurrentUserByUid(): Promise<User> {
   return getUserByUid(getCookie('uid'));
 }
 
