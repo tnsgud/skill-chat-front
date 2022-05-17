@@ -1,4 +1,4 @@
-export type UserInfo = {
+export type User = {
   displayUserName:string,
   email:string,
   chatList:string[],
